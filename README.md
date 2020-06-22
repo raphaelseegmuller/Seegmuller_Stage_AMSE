@@ -13,3 +13,14 @@
 | min_logistique.py | Optimisation des coefficients du modèle logistique | Exécutable |
 | min_richards.py | Optimisation des coefficients du modèle de Richards | Exécutable |
 | min_SIR.py | Optimisation des coefficients du modèle SIR | Exécutable |
+
+
+## models_interractive.py
+
+### Appel :
+  'python models_interractive.py'
+  - cliquer sur le lien
+ 
+### Exemple de résultat:
+
+<img src="img/models_interractive_exemple.png" alt="drawing" width="300"/>
