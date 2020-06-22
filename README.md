@@ -24,3 +24,13 @@
 ### Exemple de résultat:
 
 <img src="images/models_interractive_exemple.png" alt="drawing" width="800"/>
+
+## OxCGRT.py
+
+### Appel :
+  'python OxCGRT.py'
+  - cliquer sur le lien
+ 
+### Exemple de résultat:
+
+<img src="images/OxCGRT_exemple.png" alt="drawing" width="800"/>
