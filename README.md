@@ -18,7 +18,7 @@
 ## models_interractive.py
 
 ### Appel :
-  'python models_interractive.py'
+  `python models_interractive.py`
   - cliquer sur le lien
  
 ### Exemple de résultat:
@@ -28,7 +28,7 @@
 ## OxCGRT.py
 
 ### Appel :
-  'python OxCGRT.py'
+  `python OxCGRT.py`
   - cliquer sur le lien
  
 ### Exemple de résultat:
