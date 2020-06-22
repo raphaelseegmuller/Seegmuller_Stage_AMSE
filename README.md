@@ -23,4 +23,4 @@
  
 ### Exemple de résultat:
 
-<img src="images/models_interractive_exemple.png" alt="drawing" width="500"/>
+<img src="images/models_interractive_exemple.png" alt="drawing" width="1000"/>
