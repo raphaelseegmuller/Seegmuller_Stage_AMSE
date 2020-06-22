@@ -1,8 +1,8 @@
-from libs.fct_erreur import erreur
-import libs.models as md
 import numpy as np
 from scipy.optimize import minimize
 
+from libs.fct_erreur import erreur
+import libs.models as md
 import data as dt
 
 
