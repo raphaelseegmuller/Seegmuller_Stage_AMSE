@@ -21,7 +21,7 @@
   `python models_interractive.py`
   - cliquer sur le lien
  
-### Exemple de résultat:
+### Exemple de résultat :
 
 <img src="images/models_interractive_exemple.png" alt="drawing" width="800"/>
 
@@ -31,6 +31,6 @@
   `python OxCGRT.py`
   - cliquer sur le lien
  
-### Exemple de résultat:
+### Exemple de résultat :
 
 <img src="images/OxCGRT_exemple.png" alt="drawing" width="800"/>
