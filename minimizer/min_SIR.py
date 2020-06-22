@@ -8,7 +8,7 @@ import data as dt
 
 ### Fonctions ###
 
-# The SIR model differential equations.
+# Les équations différentielles du modèle SIR.
 def deriv(y, t, N, beta, gamma):
     S, I, R = y
     dSdt = -beta * S * I / N
@@ -29,14 +29,14 @@ def minimisation_SIR(coeff, observations, init_cond, N):
 
 ### Paramètres ###
 
-# Total population, N.
+# Population totale.
 N = 64081000
-# Initial number of infected and recovered individuals, I0 and R0.
+# Nombre initial d'individus infectés et guéris.
 I0, R0 = 2, 0
-# Everyone else, S0, is susceptible to infection initially.
+# Nombre d'individu susceptibles d'attrapper la maladie.
 S0 = N - I0 - R0
 
-# Initial conditions vector
+# Vecteur des conditions initiales.
 y0 = S0, I0, R0
 
 
