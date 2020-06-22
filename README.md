@@ -13,6 +13,7 @@
 | min_logistique.py | Optimisation des coefficients du modèle logistique | Exécutable |
 | min_richards.py | Optimisation des coefficients du modèle de Richards | Exécutable |
 | min_SIR.py | Optimisation des coefficients du modèle SIR | Exécutable |
+| min_SEIR.py | Optimisation des coefficients du modèle SEIR | Exécutable |
 
 
 ## models_interractive.py
