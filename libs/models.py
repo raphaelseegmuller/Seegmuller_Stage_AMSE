@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.integrate import odeint
 
+
 ### Modèle logistique ###
 
 def logistique(C0, K, r, t):
