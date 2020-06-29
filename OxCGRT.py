@@ -12,12 +12,19 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
+theme =  {
+    'dark': True,
+    'detail': '#007439',
+    'primary': '#00EA64',
+    'secondary': '#6E6E6E',
+}
+
 ### Figure ###
 
 app.layout = html.Div(children=[
     dcc.Graph(
         id='graph',
-        figure=fig_creator("France")
+        figure=fig_creator(["France"], ["GR", "CH", "S", "ES"])
     ),
     html.Div(id='Country_value', style={'margin-top': 20}),
     dcc.Dropdown(
@@ -83,6 +90,7 @@ app.layout = html.Div(children=[
             {'label': 'Fidji', 'value': 'Fidji'},
             {'label': 'Finlande', 'value': 'Finlande'},
             {'label': 'France', 'value': 'France'},
+            {'label': 'France2', 'value': 'France2'},
             # {'label': 'Gabon', 'value': 'Gabon'},
             # {'label': 'Gambie', 'value': 'Gambie'},
             {'label': 'Géorgie', 'value': 'Géorgie'},
@@ -202,7 +210,20 @@ app.layout = html.Div(children=[
             {'label': 'Zambie', 'value': 'Zambie'},
             {'label': 'Zimbabwe', 'value': 'Zimbabwe'}
         ],
-        value='France'
+        value=['France'],
+        multi=True
+    ),
+    html.Div(id='Curve_name', style={'margin-top': 20}),
+    dcc.Dropdown(
+        id='Curve_choice',
+        options=[
+            {'label': 'GR', 'value': 'GR'},
+            {'label': 'CH', 'value': 'CH'},
+            {'label': 'S', 'value': 'S'},
+            {'label': 'ES', 'value': 'ES'}
+        ],
+        value=['GR', 'CH', 'S', 'ES'],
+        multi=True
     )
 ])
 
@@ -215,11 +236,18 @@ def country(name):
     return 'Pays : '
 
 
+@app.callback(Output('Curve_name', 'children'),
+              [Input('Curve_choice', 'value')])
+def curve(name):
+    return 'Courbe(s) : '
+
+
 @app.callback(
     Output('graph', 'figure'),
-    [Input('Country_choice', 'value')])
-def update_graph(name):
-    return fig_creator(name)
+    [Input('Country_choice', 'value'),
+     Input('Curve_choice', 'value')])
+def update_graph(name_list, courbe):
+    return fig_creator(name_list, courbe)
 
 
 if __name__ == '__main__':
