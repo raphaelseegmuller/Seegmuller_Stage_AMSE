@@ -270,8 +270,7 @@ def fig_creator_CC(name_list, normalize):
 
 def GR_starting_point(name):
     """
-    Obtention de la date de la première augmentation du Gouvernement response index. La date est obtenue en nombre de
-    jours après le 1er janvier 2020.
+    Obtention de la date de la première augmentation du Government response index ainsi que sa valeur.
     :param name: str -> Nom du pays
     :return: int
     """
@@ -302,8 +301,7 @@ def GRCC_matrix_startGR(name_list):
 
 def CC_starting_point(name):
     """
-    Obtention de la date de la détection du premier cas de COVID 19. La date est obtenue en nombre de jours après le 1er
-    janvier 2020.
+    Obtention de la date de détection des premiers cas ainsi que de leur nombre.
     :param name: str -> Nom du pays
     :return: int
     """
