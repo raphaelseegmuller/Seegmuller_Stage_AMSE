@@ -55,7 +55,10 @@ fig.update_layout(
         'x': 0.5,
         'xanchor': 'center',
         'yanchor': 'top'},
-    title_font_size=30)
+    title_font_size=30,
+    xaxis={'title': 'Date (jour/mois)'},
+    yaxis={'title': 'Nombre d\'individu'}
+)
 
 fig.add_scatter(
     x=dt.Time,
@@ -266,7 +269,10 @@ def update_graph(EGR_log, EGR_rich, Rcoeff, b_SIR, g_SIR, b_SEIR, s_SEIR, g_SEIR
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'},
-        title_font_size=30)
+        title_font_size=30,
+        xaxis={'title': 'Date (jour/mois)'},
+        yaxis={'title': 'Nombre d\'individu'}
+    )
 
     new_fig.add_scatter(
         x=dt.Time,
