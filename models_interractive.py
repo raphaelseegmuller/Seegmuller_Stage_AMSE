@@ -4,6 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 from plotly.subplots import make_subplots
 import pandas as pd
+import numpy as np
 
 import data as dt
 from libs.models import logistique, richards, SIR, SEIR
