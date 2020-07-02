@@ -25,7 +25,7 @@
  
 ### Exemple de résultat :
 
-<img src="images/models_interractive_exemple.png" alt="drawing" width="800"/>
+<img src="images/exemple_models_interractive.png" alt="drawing" width="800"/>
 
 ## OxCGRT.py
 
@@ -35,4 +35,4 @@
  
 ### Exemple de résultat :
 
-<img src="images/OxCGRT_exemple.png">
+<img src="images/exemple_OxCGRT_exemple.png">
