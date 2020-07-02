@@ -35,4 +35,4 @@
  
 ### Exemple de résultat :
 
-<img src="images/exemple_OxCGRT_exemple.png">
+<img src="images/exemple_OxCGRT.png">
