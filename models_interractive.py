@@ -3,23 +3,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from plotly.subplots import make_subplots
-from scipy.integrate import odeint
 import pandas as pd
-from libs.models import *
 
 import data as dt
-
-
-### Fonctions ###
-
-# Les équations différentielles du modèle SIR.
-def deriv(y, t, N, beta, gamma):
-    S, I, R = y
-    dSdt = -beta * S * I / N
-    dIdt = beta * S * I / N - gamma * I
-    dRdt = gamma * I
-    return dSdt, dIdt, dRdt
-
+from libs.models import logistique, richards, SIR, SEIR
 
 ### Défintion des paramètres ###
 
@@ -28,13 +15,13 @@ C0 = 2
 # Nombre cumulatif final d'infectés.
 K = 189670
 # Taux de croissance exponentielle.
-r_log = 0.15011031  # modèle logistique
-r_rich = 0.17434972  # modèle de Richards
+r_log = 0.14628805  # modèle logistique
+r_rich = 0.16942401  # modèle de Richards
 # Intervalles de temps.
 t = np.arange(0, len(dt.Time), 1)
 t1 = np.arange(2, len(dt.Time), 1)
 # Coefficient du modèle de Richards.
-alpha1 = 1.06988692
+alpha1 = 1.0685873
 # Population totale.
 N = 64081000
 # Nombre initial d'individus infectés, infectieux et guéris.
@@ -42,8 +29,8 @@ E0, I0, R0 = 0, 2, 0
 # Nombre d'individu susceptibles d'attrapper la maladie.
 S0 = N - E0 - I0 - R0
 # Taux de transmission et taux de guérison par jours.
-beta_SIR, gamma_SIR = 9.13370681, 9.01266501  # modèle SIR
-beta_SEIR, sigma_SEIR, gamma_SEIR = 44.37642256, 2.74638698, 41.72459742  # modèle SEIR
+beta_SIR, gamma_SIR = 9.24884336, 9.12660313  # modèle SIR
+beta_SEIR, sigma_SEIR, gamma_SEIR = 44.3754473, 2.75653902, 41.72852292  # modèle SEIR
 
 # Nombre cumulé d'infectés.
 C1 = logistique(C0, K, r_log, t1)  # modèle logistique
@@ -105,7 +92,7 @@ app.layout = html.Div(children=[
             0.15: {'label': '0,15'},
             0.2: {'label': '0,2'}
         },
-        value=0.15011031
+        value=0.14628805
     ),
     html.Div(id='EGR_rich_value', style={'margin-top': 20}),
     dcc.Slider(
@@ -118,7 +105,7 @@ app.layout = html.Div(children=[
             0.15: {'label': '0,15'},
             0.2: {'label': '0,2'}
         },
-        value=0.17434972
+        value=0.16942401
     ),
     html.Div(id='Rcoeff_value', style={'margin-top': 20}),
     dcc.Slider(
@@ -131,7 +118,7 @@ app.layout = html.Div(children=[
             1: {'label': '1'},
             1.5: {'label': '1,5'}
         },
-        value=1.06988692
+        value=1.0685873
     ),
     html.Div(id='SIR_beta_value', style={'margin-top': 20}),
     dcc.Slider(
@@ -266,7 +253,7 @@ def gamma_value(g_SEIR):
 def update_graph(EGR_log, EGR_rich, Rcoeff, b_SIR, g_SIR, b_SEIR, s_SEIR, g_SEIR):
     # Nombre cumulé d'infectés.
     C1 = logistique(C0, K, EGR_log, t1)  # modèle logistique
-    C2 = richards(C0, K, EGR_rich, t, Rcoeff)  # modèle de Richards
+    C2 = richards(C0, K, EGR_rich, t1, Rcoeff)  # modèle de Richards
     C3 = SIR(S0, I0, R0, t1, N, b_SIR, g_SIR)  # modèle SIR
     C4 = SEIR(S0, E0, I0, R0, t1, N, b_SEIR, s_SEIR, g_SEIR)  # modèle SEIR
 
