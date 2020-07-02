@@ -1,5 +1,10 @@
 # Seegmuller_Stage_AMSE
 
+## Description
+
+L'objectif est de savoir s'il on peut observer des liens entre les données du COVID 19 (nombre de cas, nombre de déces...) et les indices de https://github.com/OxCGRT/covid-policy-tracker.
+
+
 ## Arborescence
 
 | Fichier | Contenu | Type |
