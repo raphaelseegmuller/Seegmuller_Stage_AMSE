@@ -34,6 +34,10 @@ Time_ext = ["01/01", "02/01", "03/01", "04/01", "05/01", "06/01", "07/01", "08/0
 
 ### Fin des prises de mesures ###
 
+'''
+Certains pays manquent de données à la fin de leur fichier texte. Pour éviter de prendre des données vides, on fixe une
+limite.
+'''
 
 Ending = dict()
 
@@ -216,6 +220,16 @@ Ending['Viêt Nam'] = 8
 Ending['Yémen'] = 5
 Ending['Zambie'] = 8
 Ending['Zimbabwe'] = 1
+
+# Population totale
+Totpop = dict()
+
+Totpop["Allemagne"] = 83020000
+Totpop["Belgique"] = 11460000
+Totpop["Danemark"] = 5806000
+Totpop["France"] = 66990000
+Totpop["Italie"] = 60360000
+Totpop["Royaume-Uni"] = 66650000
 
 # Données de https://github.com/CSSEGISandData/COVID-19
 France_C = np.array(
