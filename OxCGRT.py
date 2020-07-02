@@ -4,7 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import pandas as pd
 
-from libs.figure_creator import fig_creator
+from libs.useful_fcts import fig_creator
 
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv')
 
@@ -245,3 +245,9 @@ def update_graph(name_list, courbe):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+
+"""
+Exécution du programme :
+- Rentrer dans le terminal : python models_interractive.py
+- Cliquer sur le lien
+"""
