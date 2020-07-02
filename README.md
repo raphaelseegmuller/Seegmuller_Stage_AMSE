@@ -34,3 +34,5 @@
   - cliquer sur le lien
  
 ### Exemple de résultat :
+
+<img src="images/OxCGRT_exemple.png">
