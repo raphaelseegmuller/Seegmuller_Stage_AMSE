@@ -270,7 +270,8 @@ def fig_creator_CC(name_list, normalize):
 
 def GR_starting_point(name):
     """
-    Obtention de la date de la première augmentation du Government response index ainsi que sa valeur.
+    Obtention de la date de la première augmentation du Gouvernement response index. La date est obtenue en nombre de
+    jours après le 1er janvier 2020.
     :param name: str -> Nom du pays
     :return: int
     """
@@ -286,8 +287,7 @@ def GR_starting_point(name):
 
 def GRCC_matrix_startGR(name_list):
     """
-    Obtention de la liste du nombre cumulé de cas de COVID 19 tronquée à partir de la première augmentation du
-    Gouvernement response index.
+    Obtention de la date de la première augmentation du Government response index ainsi que sa valeur.
     :param name_list: list -> Liste de pays
     :return: numpy.ndarray
     """
@@ -301,7 +301,8 @@ def GRCC_matrix_startGR(name_list):
 
 def CC_starting_point(name):
     """
-    Obtention de la date de détection des premiers cas ainsi que de leur nombre.
+    Obtention de la date de la détection du premier cas de COVID 19. La date est obtenue en nombre de jours après le 1er
+    janvier 2020.
     :param name: str -> Nom du pays
     :return: int
     """
@@ -317,8 +318,7 @@ def CC_starting_point(name):
 
 def GRCC_matrix_startCC(name_list):
     """
-    Obtention de la liste du nombre cumulé de cas de COVID 19 tronquée à partir de la détection du premier cas de COVID
-    19.
+    Obtention de la date de détection des premiers cas ainsi que de leur nombre.
     :param name_list: list -> Liste de pays
     :return: numpy.ndarray
     """
@@ -326,6 +326,20 @@ def GRCC_matrix_startCC(name_list):
     for name in name_list:
         sp = CC_starting_point(name)
         matrix += [[sp, converter("data_text/{}".format(name))[sp][27]]]
+    matrix = np.asarray(matrix)
+    return matrix
+
+
+def give_CC_matrix(name):
+    """
+    Obtention du nombre cumulé de cas de COVID 19 en fonction du temps.
+    :param name: str -> Nom du pays
+    :return: numpy.ndarray
+    """
+    data = converter("data_text/{}".format(name))[CC_starting_point(name):]
+    matrix = []
+    for t in range(len(data)):
+        matrix += [data[t][27]]
     matrix = np.asarray(matrix)
     return matrix
 
@@ -349,107 +363,120 @@ def error(y_obs, y_pred):
 
 # Modèle logistique #
 
-def f_logistic_minimization(coeff, observations, C0, K):
+def f_logistic_minimization(coeff, name):
     """
     Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID 19
     et le modèle logistique défini à partir des paramètres de la fonction.
     :param coeff: numpy.ndarray
-    :param observations: list, numpy.ndarray -> Observations réelles
-    :param C0: int
-    :param K: int
-    :return: numpy.ndarray
+    :param name: str -> Nom du pays
+    :return: float
     """
-    t = np.arange(2, len(observations) + 2)
+    sp = int(GRCC_matrix_startCC([name])[0][0])
+    C0 = GRCC_matrix_startCC([name])[0][1]
+    observations = give_CC_matrix(name)
+    K = np.max(observations)
+    t = np.arange(sp, len(observations) + sp)
     C = md.logistique(C0, K, coeff, t)
     return error(observations, C)
 
 
-def logistic_minimization(coeff, others):
+def logistic_minimization(coeff, name):
     """
     Calcul des coefficients du modèle logistique pour qu'il approche au mieux les données réelles.
     :param coeff: numpy.ndarray
-    :param others: tuple
+    :param name: str -> Nom du pays
     :return: numpy.ndarray
     """
-    return minimize(f_logistic_minimization, coeff, args=others).x
+    return minimize(f_logistic_minimization, coeff, args=(name)).x[0]
 
 
 # Modèle de Richards #
 
-def f_richards_minimization(coeff, observations, C0, K):
+def f_richards_minimization(coeff, name):
     """
     Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID 19
     et le modèle de Richards défini à partir des paramètres de la fonction.
     :param coeff: numpy.ndarray
-    :param observations: list, numpy.ndarray -> Observations réelles
-    :param C0: int
-    :param K: int
-    :return: numpy.ndarray
+    :param name: str -> Nom du pays
+    :return: float
     """
-    t = np.arange(2, len(observations) + 2)
+    sp = int(GRCC_matrix_startCC([name])[0][0])
+    C0 = GRCC_matrix_startCC([name])[0][1]
+    observations = give_CC_matrix(name)
+    K = np.max(observations)
+    t = np.arange(sp, len(observations) + sp)
     C = md.richards(C0, K, coeff[0], t, coeff[1])
     return error(observations, C)
 
 
-def richards_minimization(coeff, others):
+def richards_minimization(coeff, name):
     """
     Calcul des coefficients du modèle de Richards pour qu'il approche au mieux les données réelles.
     :param coeff: numpy.ndarray
-    :param others: tuple
+    :param name: str -> Nom du pays
     :return: numpy.ndarray
     """
-    return minimize(f_richards_minimization, coeff, args=others).x
+    return minimize(f_richards_minimization, coeff, args=(name)).x
 
 
 # Modèle SIR #
 
-def f_SIR_minimization(coeff, observations, init_cond, N):
+def f_SIR_minimization(coeff, name):
     """
     Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID 19
     et le modèle SIR défini à partir des paramètres de la fonction.
     :param coeff: numpy.ndarray
-    :param observations: list, numpy.ndarray -> Observations réelles
-    :param init_cond: tuple
-    :param N: int
-    :return: numpy.ndarray
+    :param name: str -> Nom du pays
+    :return: float
     """
-    t = np.arange(2, len(observations) + 2)
-    C = md.SIR(init_cond[0], init_cond[1], init_cond[2], t, N, coeff[0], coeff[1])
+    sp = int(GRCC_matrix_startCC([name])[0][0])
+    init_I = GRCC_matrix_startCC([name])[0][1]
+    observations = give_CC_matrix(name)
+    N = dt.Totpop[name]
+    t = np.arange(sp, len(observations) + sp)
+    C = md.SIR(N - init_I, init_I, 0, t, N, coeff[0], coeff[1])
     return error(observations, C)
 
 
-def SIR_minimization(coeff, others):
+def SIR_minimization(coeff, name):
     """
     Calcul des coefficients du modèle SIR pour qu'il approche au mieux les données réelles.
     :param coeff: numpy.ndarray
-    :param others: tuple
+    :param name: str -> Nom du pays
     :return: numpy.ndarray
     """
-    return minimize(f_SIR_minimization, coeff, args=others).x
+    return minimize(f_SIR_minimization, coeff, args=(name)).x
 
 
 # Modèle SEIR #
 
-def f_SEIR_minimization(coeff, observations, init_cond, N):
+def f_SEIR_minimization(coeff, name):
     """
     Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID 19
     et le modèle SEIR défini à partir des paramètres de la fonction.
     :param coeff: numpy.ndarray
-    :param observations: list, numpy.ndarray -> Observations réelles
-    :param init_cond: tuple
-    :param N: int
-    :return: numpy.ndarray
+    :param name: str -> Nom du pays
+    :return: float
     """
-    t = np.arange(2, len(observations) + 2)
-    C = md.SEIR(init_cond[0], init_cond[1], init_cond[2], init_cond[3], t, N, coeff[0], coeff[1], coeff[2])
+    sp = int(GRCC_matrix_startCC([name])[0][0])
+    init_I = GRCC_matrix_startCC([name])[0][1]
+    observations = give_CC_matrix(name)
+    N = dt.Totpop[name]
+    t = np.arange(sp, len(observations) + sp)
+    C = md.SEIR(N - init_I, 0, init_I, 0, t, N, coeff[0], coeff[1], coeff[2])
+    '''
+    Le nombre initial de personnes infectées mais pas contagieuses est fixé à 0.
+    '''
     return error(observations, C)
 
 
-def SEIR_minimization(coeff, others):
+def SEIR_minimization(coeff, name):
     """
     Calcul des coefficients du modèle SEIR pour qu'il approche au mieux les données réelles.
     :param coeff: numpy.ndarray
-    :param others: tuple
+    :param name: str -> Nom du pays
     :return: numpy.ndarray
     """
-    return minimize(f_SEIR_minimization, coeff, args=others).x
+    return minimize(f_SEIR_minimization, coeff, args=name).x
+
+### Analyse en composante principale ###
