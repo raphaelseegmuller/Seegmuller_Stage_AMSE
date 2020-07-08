@@ -1,6 +1,10 @@
 import numpy as np
 from plotly.subplots import make_subplots
 from scipy.optimize import minimize
+import scipy.linalg
+from math import ceil
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
 
 import libs.models as md
 import data as dt
@@ -233,7 +237,7 @@ def fig_creator_CC(name_list, normalize):
     Création de figure représentant le nombre cumulé d'individus contaminés par la COVID 19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
-    :param normalize: bool
+    :param normalize: str
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
@@ -342,6 +346,240 @@ def give_CC_matrix(name):
         matrix += [data[t][27]]
     matrix = np.asarray(matrix)
     return matrix
+
+
+def give_listCC_matrix(name_list):
+    """
+    Obtention du nombre cumulé de cas de COVID 19 en fonction du temps pour une liste de pays.
+    :param name_list: list, numpy.ndarray
+    :return: numpy.ndarray
+    """
+    final_matrix = []
+    for name in name_list:
+        data = converter("data_text/{}".format(name))[CC_starting_point(name):]
+        matrix = []
+        for t in range(len(data)):
+            matrix += [data[t][27]]
+        final_matrix += [matrix]
+    return np.asarray(final_matrix)
+
+
+def mid_point(name):
+    """
+    Obtention de la date du milieu de l'épidémie. La date est obtenue en nomre de jours après le 1er janvier 2020.
+    :param name: str -> Nom du pays
+    :return: int
+    """
+    matrix = converter("data_text/{}".format(name))
+    starting_point = CC_starting_point(name)
+    return ceil((len(matrix) - starting_point) / 2) + starting_point
+
+
+def give_list_mid_point(name_list):
+    """
+    Obtention des données de différents pays au milieu de l'épidémie.
+    :param name_list: list, numpy.ndarray
+    :return: numpy.ndarray
+    """
+    matrix = []
+    for name in name_list:
+        matrix += [converter("data_text/{}".format(name))[mid_point(name)]]
+    return np.asarray(matrix)
+
+
+def select_index(matrix_init):
+    """
+    Obtention des indices utilisés pour réaliser l'ACP.
+    :param matrix_init: numpy.ndarray
+    :return: numpy.ndarray
+    """
+    matrix = matrix_init.tolist()
+    new_matrix = []
+    for country in range(len(matrix)):
+        new_matrix += [[matrix[country][0]] + [matrix[country][2]] + [matrix[country][4]] + [matrix[country][6]] + [
+            matrix[country][8]] + [matrix[country][10]] + [matrix[country][12]] + matrix[country][14:16] +
+                       [matrix[country][17]] + matrix[country][22:24]]
+    return np.asarray(new_matrix)
+
+
+def give_list_around_mid_point(name_list):
+    """
+    Obtention des indices utilisés pour réaliser l'ACP deux semaines autour du point de milieu d'épidémie.
+    :param name_list: list, numpy.ndarray
+    :return: numpy.ndarray
+    """
+    matrix = []
+    for name in name_list:
+        index = []
+        md = mid_point(name)
+        data = converter("data_text/{}".format(name))
+        for date in range(md - 7, md + 8):
+            index += [data[date][0], data[date][2], data[date][4], data[date][6], data[date][8], data[date][10],
+                      data[date][12], data[date][14], data[date][15], data[date][17], data[date][22], data[date][23]]
+        matrix += [index]
+    return np.asarray(matrix)
+
+
+def give_average_matrix(name_list):
+    """
+    Obtention de la moyenne des indices pour une durée de deux semaines autour du temps de milieu d'épidémie.
+    :param name_list: list, numpy.ndarray
+    :return: numpy.ndarray
+    """
+    matrix = []
+    for num_name in range(len(name_list)):
+        matrix += [[]]
+        data = converter("data_text/{}".format(name_list[num_name]))
+        md = mid_point(name_list[num_name])
+        index_list = [0, 2, 4, 6, 8, 10, 12, 14, 15, 17, 22, 23]
+        for i in index_list:
+            index = []
+            for date in range(md - 7, md + 8):
+                index += [data[date][i]]
+            av_index = np.mean(np.asarray(index))
+            matrix[num_name] += [av_index]
+    return np.asarray(matrix)
+
+
+def fig_creator_CC_comparator(name_list, normalize, normalize2):
+    """
+    Création de figure représentant le nombre cumulé d'individus contaminés par la COVID 19 en fonction du temps. Les
+    données viennent de 'data_text'.
+    :param name_list: list -> Liste de pays
+    :param normalize: str
+    :param normalize2: str
+    :return: plotly.graph_objs._figure.Figure
+    """
+    fig = make_subplots(rows=1, cols=1)
+    title = "Nombre cumulé d'infectés - COVID 19"
+    fig.update_layout(
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        title_font_size=30,
+        xaxis={'title': 'Date (nombre de jour du milieu de l\'épidémie)'},
+        yaxis={'title': 'Nombre d\'individu'}
+    )
+    limit = 7
+    time_list = np.arange(-7, 8, 1)
+    for name in name_list:
+        md = mid_point(name)
+        data = converter("data_text/{}".format(name))[md - limit:md + limit + 1]
+        matrix = []
+        for t in range(len(data)):
+            if normalize2 == "Non":
+                if normalize == "Non":
+                    matrix += [data[t][27]]
+                else:  # Normalisation de la courbe entre 0 et 1
+                    matrix += [data[t][27] / dt.Totpop[name]]
+            else:
+                if normalize == "Non":
+                    matrix += [data[t][27] - data[limit][27]]
+                else:  # Normalisation de la courbe entre 0 et 1
+                    matrix += [(data[t][27] - data[limit][27]) / dt.Totpop[name]]
+        fig.add_scatter(
+            x=time_list,
+            y=matrix,
+            name=name)
+    return fig
+
+
+def fig_creator_Cdeath_comparator(name_list, normalize, normalize2):
+    """
+    Création de figure représentant le nombre cumulé d'individus décédés de la COVID 19 en fonction du temps. Les
+    données viennent de 'data_text'.
+    :param name_list: list -> Liste de pays
+    :param normalize: bool
+    :param normalize2: str
+    :return: plotly.graph_objs._figure.Figure
+    """
+    fig = make_subplots(rows=1, cols=1)
+    title = "Nombre cumulé de décès - COVID 19"
+    fig.update_layout(
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        title_font_size=30,
+        xaxis={'title': 'Date (nombre de jour du milieu de l\'épidémie)'},
+        yaxis={'title': 'Nombre d\'individu'}
+    )
+    limit = 7
+    time_list = np.arange(-7, 8, 1)
+    for name in name_list:
+        md = mid_point(name)
+        data = converter("data_text/{}".format(name))[md - limit:md + limit + 1]
+        matrix = []
+        for t in range(len(data)):
+            if normalize2 == "Non":
+                if normalize == "Non":
+                    matrix += [data[t][28]]
+                else:  # Normalisation de la courbe entre 0 et 1
+                    matrix += [data[t][28] / dt.Totpop[name]]
+            else:
+                if normalize == "Non":
+                    matrix += [data[t][28] - data[limit][28]]
+                else:  # Normalisation de la courbe entre 0 et 1
+                    matrix += [(data[t][28] - data[limit][28]) / dt.Totpop[name]]
+        fig.add_scatter(
+            x=time_list,
+            y=matrix,
+            name=name)
+    return fig
+
+
+def fig_creator_death_comparator(name_list, normalize, normalize2):
+    """
+    Création de figure représentant le nombre d'individus décédés de la COVID 19 en fonction du temps. Les
+    données viennent de 'data_text'.
+    :param name_list: list -> Liste de pays
+    :param normalize: bool
+    :param normalize2: str
+    :return: plotly.graph_objs._figure.Figure
+    """
+    fig = make_subplots(rows=1, cols=1)
+    title = "Nombre de décès - COVID 19"
+    fig.update_layout(
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        title_font_size=30,
+        xaxis={'title': 'Date (nombre de jour du milieu de l\'épidémie)'},
+        yaxis={'title': 'Nombre d\'individu'}
+    )
+    limit = 7
+    time_list = np.arange(-7, 8, 1)
+    for name in name_list:
+        md = mid_point(name)
+        data = converter("data_text/{}".format(name))[md - limit:md + limit + 1]
+        matrix = []
+        cumulative_number = converter("data_text/{}".format(name))[md - limit - 1][28]
+        for t in range(len(data)):
+            if normalize2 == "Non":
+                if normalize == "Non":
+                    matrix += [data[t][28] - cumulative_number]
+                else:  # Normalisation de la courbe entre 0 et 1
+                    matrix += [(data[t][28] - cumulative_number) / dt.Totpop[name]]
+            else:
+                if normalize == "Non":
+                    matrix += [data[t][28] - cumulative_number - data[limit][28] + data[limit - 1][28]]
+                else:  # Normalisation de la courbe entre 0 et 1
+                    matrix += [(data[t][28] - cumulative_number - data[limit][28] + data[limit - 1][28]) /
+                               dt.Totpop[name]]
+            cumulative_number = data[t][28]
+        fig.add_scatter(
+            x=time_list,
+            y=matrix,
+            name=name)
+    return fig
 
 
 ### Minimisation ###
@@ -479,4 +717,142 @@ def SEIR_minimization(coeff, name):
     """
     return minimize(f_SEIR_minimization, coeff, args=name).x
 
-### Analyse en composante principale ###
+
+### Analyse en composantes principales ###
+
+
+def reduction(matrix):
+    """
+    Réduction la matrice :
+    - Soustraction de chaque colonne à sa moyenne
+    - Division de chaque colonne par son écart-type.
+    :param matrix: numpy.ndarray
+    :return: numpy.ndarray
+    """
+    new_matrix = np.copy(matrix.T)
+    # Soustraction par l'espérance.
+    for i in range(new_matrix.shape[0]):
+        new_matrix[i] = new_matrix[i] - np.mean(new_matrix[i])
+    # Division par l'écart type.
+    for i in range(new_matrix.shape[0]):
+        std = np.std(new_matrix[i])
+        if std != 0:
+            new_matrix[i] = new_matrix[i] / std
+    return new_matrix.T
+
+
+def process_matrix(DATA):
+    """
+    Calcul des valeurs et vecteurs propres correspondant aux composantes principales de DATA.
+    :param DATA: numpy.ndarray
+    :return: numpy.ndarray
+    """
+    data_reduced = reduction(DATA)
+    corr_matrix = 1 / data_reduced.shape[0] * np.dot(data_reduced.T, data_reduced)
+    print("corr_matrix is symetric :", np.all(corr_matrix == corr_matrix.T))
+    print("corr_matrix is real :", np.all(corr_matrix == np.real(corr_matrix)))
+    val_and_vec = scipy.linalg.eigh(corr_matrix)
+    return val_and_vec
+
+
+def sort_eigenvalues(eigen_values):
+    """
+    Obtention des valeurs propres triées par ordre décroissant.
+    :param eigen_values: numpy.ndarray
+    :return: list
+    """
+    eigen_values = eigen_values.real
+    for i in range(len(eigen_values)):
+        if np.isclose(0, eigen_values[i]):
+            eigen_values[i] = 0
+        assert eigen_values[i] >= 0
+    p = sum(eigen_values)
+    supertuples = [(eigen_values[i], eigen_values[i] / p, i) for i in range(len(eigen_values))]
+    supertuples.sort(reverse=True)
+    return supertuples
+
+
+def compute_new_data_matrix(DATA, eig_vectors, eig_values, n):
+    """
+    Calcul de la nouvelle matrice de données évaluant chaque individu selon les nouvelles variables. Si
+    n < len(eig_values), la nouvelle matrice comporte uniquement les n variables les plus dispersives.
+    :param DATA: numpy.ndarray -> Matrice de données initiale
+    :param eig_vectors: numpy.ndarray
+    :param eig_values: numpy.ndarray
+    :param n: int
+    :return: numpy.ndarray
+    """
+    assert n <= len(eig_values)
+
+    eig_values = sort_eigenvalues(eig_values)
+    eig_values = eig_values[:n]
+
+    new_DATA = np.dot(reduction(DATA), eig_vectors)
+    indexes = []
+    for v in eig_values:
+        indexes.append(v[2])
+    new_DATA = new_DATA[:, indexes]
+    return new_DATA
+
+
+def find_clusters(new_DATA, nb_clusters):
+    """
+    Application du kmean clustering pour trouver les clusters.
+    :param new_DATA: numpy.ndarray
+    :param nb_clusters: int
+    :return: tuple
+    """
+    kmeans = KMeans(n_clusters=nb_clusters, n_init=50).fit(new_DATA)
+    labels = kmeans.labels_
+    inertia = kmeans.inertia_
+    return labels, inertia
+
+
+def get_DATA_2D_in_clusters(DATA, nb_clusters):
+    """
+    Obtention de la projection des individus dans l'espace des 3 variables d'inertie maximale avec clustering.
+    :param DATA: numpy.ndarray
+    :param nb_clusters: int
+    :return: tuple
+    """
+    if nb_clusters > len(DATA):
+        print("Not enough markers to distinguish all the clusters.")
+    labels, inertia = find_clusters(DATA, nb_clusters)
+    print("Inertia :", inertia)
+    return labels, inertia
+
+
+def plot_DATA_2D_in_clusters(DATA, labels):
+    """
+    Affichage des individus dans l'espace défini par les deux vecteurs propres représentant les variables les plus
+    dispersives.
+    :param DATA: numpy.ndarray
+    :param labels: numpy.ndarray
+    :return: NoneType -> figure matplotlib.pyplot
+    """
+    K = np.max(labels)
+    markerslist = [r"$\mathcal{A}$", r"$\mathcal{B}$", r"$\mathcal{C}$", r"$\mathcal{D}$",
+                   r"$\mathcal{E}$", r"$\mathcal{F}$", r"$\mathcal{G}$", r"$\mathcal{H}$", r"$\mathcal{I}$",
+                   r"$\mathcal{J}$", r"$\mathcal{K}$", r"$\mathcal{L}$", r"$\mathcal{M}$", r"$\mathcal{N}$",
+                   r"$\mathcal{O}$", r"$\mathcal{P}$", r"$\mathcal{Q}$", r"$\mathcal{R}$", r"$\mathcal{S}$",
+                   r"$\mathcal{T}$", r"$\mathcal{U}$", r"$\mathcal{V}$", r"$\mathcal{W}$", r"$\mathcal{X}$",
+                   r"$\mathcal{Y}$", r"$\mathcal{Z}$"]
+    cols = ["blue", "orange", "green", "red", "purple", "grey", "brown", "pink", "purple", "cyan", "beige", "deeppink"]
+
+    for k in range(K + 1):
+        l_x = []
+        l_y = []
+        for i, label in enumerate(labels):
+            if label == k:
+                indiv = DATA[i]
+                x1 = indiv[0]
+                y1 = indiv[1]
+                l_x.append(x1)
+                l_y.append(y1)
+
+        plt.scatter(l_x, l_y, cmap="viridis", marker=markerslist[k], label="Group " + markerslist[k],
+                    color=cols[k])  # ,edgecolor='black', linewidth='3')
+
+    plt.gca().set_xlabel(r"Projection sur $X'_1$ (en unité de $\sigma'_1$)")
+    plt.gca().set_ylabel(r"Projection sur $X'_2$ (en unité de $\sigma'_2$)")
+    plt.legend()
