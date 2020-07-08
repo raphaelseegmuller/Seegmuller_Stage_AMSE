@@ -224,12 +224,23 @@ Ending['Zimbabwe'] = 1
 # Population totale
 Totpop = dict()
 
+Totpop["Albanie"] = 2846000
 Totpop["Allemagne"] = 83020000
+Totpop["Autriche"] = 8859000
 Totpop["Belgique"] = 11460000
 Totpop["Danemark"] = 5806000
+Totpop["Espagne"] = 46940000
 Totpop["France"] = 66990000
+Totpop["Irlande"] = 4904000
+Totpop["Islande"] = 364134
 Totpop["Italie"] = 60360000
+Totpop["Pays-Bas"] = 17280000
+Totpop["Portugal"] = 10280000
+Totpop["Roumanie"] = 19410000
 Totpop["Royaume-Uni"] = 66650000
+Totpop["Serbie"] = 6982000
+Totpop["Suède"] = 10230000
+Totpop["Suisse"] = 8570000
 
 # Données de https://github.com/CSSEGISandData/COVID-19
 France_C = np.array(
