@@ -15,8 +15,12 @@ L'objectif est de savoir s'il on peut observer des liens entre les données du C
 |   |   |   |
 | data.py | Données du COVID 19 | Données |
 |   |   |   |
-| models_interractive.py | Représentation du nombre cumulatif d'infectés du COVID 19 en France et des différents modèles avec coefficients optimisés | Exécutable |
+| models_interractive.py | Représentation du nombre cumulatif d'infectés de la COVID 19 en France et des différents modèles avec coefficients optimisés | Exécutable |
 | OxCGRT.py | Représentation des indicateurs politiques | Exécutable |
+| CC_display.py | Représentation du nombre cumulatif d'infectés de la COVID 19 dans le monde | Exécutable |
+| CC_comparator.py | Outil de comparaison du nombre cumulatif d'infectés de la COVID 19 dans le monde | Exécutable |
+| CDeath_comparator.py | Outil de comparaison du nombre cumulatif de décès de la COVID 19 dans le monde | Exécutable |
+| Death_comparator.py | Outil de comparaison du nombre de décès de la COVID 19 dans le monde | Exécutable |
 
 ## models_interractive.py
 
