@@ -31,7 +31,6 @@ def converter(path):
     EconomicSupportIndex,EconomicSupportIndexForDisplay
     '''
 
-    # path = "/home/raphael/PycharmProjects/Stage_AMSE/" + path  # Utile pour minimizer
     data_file = open(path, 'r')  # Ouverture du fichier
     # Construction de la matrice
     matrix = []
