@@ -31,6 +31,7 @@ def converter(path):
     EconomicSupportIndex,EconomicSupportIndexForDisplay
     '''
 
+    # path = "/home/raphael/PycharmProjects/Stage_AMSE/" + path  # Utile pour minimizer
     data_file = open(path, 'r')  # Ouverture du fichier
     # Construction de la matrice
     matrix = []
@@ -402,10 +403,11 @@ def select_index(matrix_init):
     return np.asarray(new_matrix)
 
 
-def give_list_around_mid_point(name_list):
+def give_list_around_mid_point(name_list, days_around):
     """
-    Obtention des indices utilisés pour réaliser l'ACP deux semaines autour du point de milieu d'épidémie.
+    Obtention des indices utilisés pour réaliser l'ACP autour du point de milieu d'épidémie.
     :param name_list: list, numpy.ndarray
+    :param days_around: int
     :return: numpy.ndarray
     """
     matrix = []
@@ -413,17 +415,40 @@ def give_list_around_mid_point(name_list):
         index = []
         md = mid_point(name)
         data = converter("data_text/{}".format(name))
-        for date in range(md - 7, md + 8):
+        for date in range(md - days_around, md + days_around + 1):
             index += [data[date][0], data[date][2], data[date][4], data[date][6], data[date][8], data[date][10],
                       data[date][12], data[date][14], data[date][15], data[date][17], data[date][22], data[date][23]]
         matrix += [index]
     return np.asarray(matrix)
 
 
-def give_average_matrix(name_list):
+def give_list_around_mid_point_flag(name_list, days_around):
+    """
+    Obtention des indices (avec les valeurs de flag) utilisés pour réaliser l'ACP autour du point de milieu d'épidémie.
+    :param name_list: list, numpy.ndarray
+    :param days_around: int
+    :return: numpy.ndarray
+    """
+    matrix = []
+    for name in name_list:
+        index = []
+        md = mid_point(name)
+        data = converter("data_text/{}".format(name))
+        for date in range(md - days_around, md + days_around + 1):
+            index += [data[date][0], data[date][1], data[date][2], data[date][3], data[date][4], data[date][5],
+                      data[date][6], data[date][7], data[date][8], data[date][9], data[date][10], data[date][11],
+                      data[date][12], data[date][13], data[date][14], data[date][15], data[date][16], data[date][17],
+                      data[date][22], data[date][23]]
+            # Fonction pas applicable à cause du manque de données de flag pour certains pays.
+        matrix += [index]
+    return np.asarray(matrix)
+
+
+def give_average_matrix(name_list, days_around):
     """
     Obtention de la moyenne des indices pour une durée de deux semaines autour du temps de milieu d'épidémie.
     :param name_list: list, numpy.ndarray
+    :param days_around: int
     :return: numpy.ndarray
     """
     matrix = []
@@ -434,11 +459,83 @@ def give_average_matrix(name_list):
         index_list = [0, 2, 4, 6, 8, 10, 12, 14, 15, 17, 22, 23]
         for i in index_list:
             index = []
-            for date in range(md - 7, md + 8):
+            for date in range(md - days_around, md + days_around + 1):
                 index += [data[date][i]]
             av_index = np.mean(np.asarray(index))
             matrix[num_name] += [av_index]
     return np.asarray(matrix)
+
+
+def fig_creator_md_inter(name, coeff_list):
+    """
+    Création de figure pour models_interractive.py : Représentation des différents modèles et de la courbe réelle du
+    nombre cumulé de cas de la COVID 19.
+    :param name: str -> Nom du pays
+    :param coeff_list: list -> Liste des paramètres des différents modèles dans cet ordre : [r_log, r_rich, alpha,
+    beta_SIR, gamma_SIR, beta_SEIR, sigma_SEIR, gamma_SEIR]
+    :return: plotly.graph_objs._figure.Figure
+    """
+    fig = make_subplots(rows=1, cols=1)
+    title = "Nombre cumulé d'infectés - COVID 19"
+    fig.update_layout(
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        title_font_size=30,
+        xaxis={'title': 'Date (jour/mois)'},
+        yaxis={'title': 'Nombre d\'individu'}
+    )
+    matrix = give_CC_matrix(name)
+    sp = CC_starting_point(name)
+
+    ### Défintion des paramètres ###
+
+    # Nombre initial d'infectés.
+    C0 = matrix[0]
+    # Nombre cumulatif final d'infectés.
+    K = matrix[len(matrix) - 1]
+    # Intervalles de temps.
+    t = np.arange(sp, len(dt.Time_ext), 1)
+    # Population totale.
+    N = dt.Totpop[name]
+    # Nombre initial d'individus infectés, infectieux et guéris.
+    E0, I0, R0 = 0, C0, 0
+    # Nombre d'individu susceptibles d'attrapper la maladie.
+    S0 = N - E0 - I0 - R0
+
+    # Modèles calculant le nombre cumulé d'infectés.
+    C1 = md.logistique(C0, K, coeff_list[0], t)  # modèle logistique
+    C2 = md.richards(C0, K, coeff_list[1], t, coeff_list[2])  # modèle de Richards
+    C3 = md.SIR(S0, I0, R0, t, N, coeff_list[3], coeff_list[4])  # modèle SIR
+    C4 = md.SEIR(S0, E0, I0, R0, t, N, coeff_list[5], coeff_list[6], coeff_list[7])  # modèle SEIR
+
+    ### Ajout des courbes ###
+
+    fig.add_scatter(
+        x=dt.Time_ext[sp:],
+        y=matrix,
+        name=name)
+
+    fig.add_scatter(
+        x=dt.Time_ext[sp:],
+        y=C1, name="Modèle logistique")
+
+    fig.add_scatter(
+        x=dt.Time_ext[sp:],
+        y=C2, name="Modèle de Richards")
+
+    fig.add_scatter(
+        x=dt.Time_ext[sp:],
+        y=C3, name="Modèle SIR")
+
+    fig.add_scatter(
+        x=dt.Time_ext[sp:],
+        y=C4, name="Modèle SEIR")
+
+    return fig
 
 
 def fig_creator_CC_comparator(name_list, normalize, normalize2):
@@ -487,12 +584,61 @@ def fig_creator_CC_comparator(name_list, normalize, normalize2):
     return fig
 
 
+def fig_creator_C_comparator(name_list, normalize, normalize2):
+    """
+    Création de figure représentant le nombre d'individus infectés de la COVID 19 en fonction du temps. Les
+    données viennent de 'data_text'.
+    :param name_list: list -> Liste de pays
+    :param normalize: str
+    :param normalize2: str
+    :return: plotly.graph_objs._figure.Figure
+    """
+    fig = make_subplots(rows=1, cols=1)
+    title = "Nombre d'infectés' - COVID 19"
+    fig.update_layout(
+        title={
+            'text': title,
+            'y': 0.9,
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
+        title_font_size=30,
+        xaxis={'title': 'Date (nombre de jour du milieu de l\'épidémie)'},
+        yaxis={'title': 'Nombre d\'individu'}
+    )
+    limit = 7
+    time_list = np.arange(-7, 8, 1)
+    for name in name_list:
+        md = mid_point(name)
+        data = converter("data_text/{}".format(name))[md - limit:md + limit + 1]
+        matrix = []
+        cumulative_number = converter("data_text/{}".format(name))[md - limit - 1][27]
+        for t in range(len(data)):
+            if normalize2 == "Non":
+                if normalize == "Non":
+                    matrix += [data[t][27] - cumulative_number]
+                else:  # Normalisation de la courbe entre 0 et 1
+                    matrix += [(data[t][27] - cumulative_number) / dt.Totpop[name]]
+            else:
+                if normalize == "Non":
+                    matrix += [data[t][27] - cumulative_number - data[limit][27] + data[limit - 1][27]]
+                else:  # Normalisation de la courbe entre 0 et 1
+                    matrix += [(data[t][27] - cumulative_number - data[limit][27] + data[limit - 1][27]) /
+                               dt.Totpop[name]]
+            cumulative_number = data[t][27]
+        fig.add_scatter(
+            x=time_list,
+            y=matrix,
+            name=name)
+    return fig
+
+
 def fig_creator_Cdeath_comparator(name_list, normalize, normalize2):
     """
     Création de figure représentant le nombre cumulé d'individus décédés de la COVID 19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
-    :param normalize: bool
+    :param normalize: str
     :param normalize2: str
     :return: plotly.graph_objs._figure.Figure
     """
@@ -538,7 +684,7 @@ def fig_creator_death_comparator(name_list, normalize, normalize2):
     Création de figure représentant le nombre d'individus décédés de la COVID 19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
-    :param normalize: bool
+    :param normalize: str
     :param normalize2: str
     :return: plotly.graph_objs._figure.Figure
     """
@@ -802,7 +948,7 @@ def find_clusters(new_DATA, nb_clusters):
     :param nb_clusters: int
     :return: tuple
     """
-    kmeans = KMeans(n_clusters=nb_clusters, n_init=50).fit(new_DATA)
+    kmeans = KMeans(n_clusters=nb_clusters, n_init=12).fit(new_DATA)
     labels = kmeans.labels_
     inertia = kmeans.inertia_
     return labels, inertia
