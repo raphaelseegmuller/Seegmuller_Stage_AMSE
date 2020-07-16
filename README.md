@@ -30,7 +30,7 @@ L'objectif est de savoir s'il on peut observer des liens entre les données du C
  
 ### Exemple de résultat :
 
-<img src="images/exemple_models_interractive.png" width="800"/>
+<img src="images/exemple_models_interractive_1.png" width="800"/>
 
 ## OxCGRT.py
 
