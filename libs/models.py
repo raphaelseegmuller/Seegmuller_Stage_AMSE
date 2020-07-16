@@ -76,13 +76,15 @@ def SIR(S_init, I_init, R_init, t, N_tot, beta, gamma):
 
     # Intégration des équations du modèle SIR.
     ret = odeint(deriv_SIR, y0, t, args=(N_tot, beta, gamma))
-    I = ret.T[1]
+    I, R = ret.T[1], ret.T[2]
 
     # Nombre cumulé d'infectés.
     C = np.zeros(len(I))
-    C[0] = I[0]
-    for i in range(1, len(I)):
-        C[i] = C[i - 1] + I[i]
+    # C[0] = I[0]
+    # for i in range(1, len(I)):
+    #     C[i] = C[i - 1] + I[i]
+    for i in range(len(I)):
+        C[i] = I[i] + R[i]
     return C
 
 
@@ -127,11 +129,13 @@ def SEIR(S_init, E_init, I_init, R_init, t, N_tot, beta, sigma, gamma):
 
     # Intégration des équations du modèle SIR.
     ret = odeint(deriv_SEIR, y0, t, args=(N_tot, beta, sigma, gamma))
-    I = ret.T[2]
+    E, I, R = ret.T[1], ret.T[2], ret.T[3]
 
     # Nombre cumulé d'infectés.
     C = np.zeros(len(I))
-    C[0] = I[0]
-    for i in range(1, len(I)):
-        C[i] = C[i - 1] + I[i]
+    # C[0] = I[0]
+    # for i in range(1, len(I)):
+    #     C[i] = C[i - 1] + I[i]
+    for i in range(len(I)):
+        C[i] = E[i] + I[i] + R[i]
     return C
