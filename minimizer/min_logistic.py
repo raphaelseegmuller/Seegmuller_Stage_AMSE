@@ -1,6 +1,10 @@
 from libs.useful_fcts import logistic_minimization
 import numpy as np
 
+'''
+Pour lancer ce programme, le sortir du dossier minimizer.
+'''
+
 ### Paramètres ###
 
 # Pays
