@@ -19,6 +19,7 @@ L'objectif est de savoir s'il on peut observer des liens entre les données du C
 | OxCGRT.py | Représentation des indicateurs politiques | Exécutable |
 | CC_display.py | Représentation du nombre cumulatif d'infectés de la COVID 19 dans le monde | Exécutable |
 | CC_comparator.py | Outil de comparaison du nombre cumulatif d'infectés de la COVID 19 dans le monde | Exécutable |
+| C_comparator.py | Outil de comparaison du nombr cumulatif d'infectés de la COVID 19 dans le monde | Exécutable |
 | CDeath_comparator.py | Outil de comparaison du nombre cumulatif de décès de la COVID 19 dans le monde | Exécutable |
 | Death_comparator.py | Outil de comparaison du nombre de décès de la COVID 19 dans le monde | Exécutable |
 
