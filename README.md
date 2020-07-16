@@ -10,8 +10,8 @@ L'objectif est de savoir s'il on peut observer des liens entre les données du C
 | Fichier | Contenu | Type |
 | :-----: | :-----: | :-----: |
 |   |   |   | 
-| models.py | Toutes les fonctions utilisées pour calculer les modèles | Pack de fonctions |
-| useful_fcts.py | Fonctions utiles | Pack de fonctions |
+| libs/models.py | Toutes les fonctions utilisées pour calculer les modèles | Pack de fonctions |
+| libs/useful_fcts.py | Fonctions utiles | Pack de fonctions |
 |   |   |   |
 | data.py | Données du COVID 19 | Données |
 |   |   |   |
@@ -22,6 +22,9 @@ L'objectif est de savoir s'il on peut observer des liens entre les données du C
 | C_comparator.py | Outil de comparaison du nombr cumulatif d'infectés de la COVID 19 dans le monde | Exécutable |
 | CDeath_comparator.py | Outil de comparaison du nombre cumulatif de décès de la COVID 19 dans le monde | Exécutable |
 | Death_comparator.py | Outil de comparaison du nombre de décès de la COVID 19 dans le monde | Exécutable |
+| clustering_mid.py | Analyse en composante principale puis *clustering* sur les indicateurs politiques de plusieurs pays au point de milieu d'épidémie | Exécutable |
+| clustering_around_mid.py | Analyse en composante principale puis *clustering* sur les indicateurs politiques de plusieurs pays autour du point de milieu d'épidémie | Exécutable |
+| give_average_index.py | Obtention des indicateurs politiques moyens de plusieurs pays | Exécutable |
 
 ## models_interractive.py
 
