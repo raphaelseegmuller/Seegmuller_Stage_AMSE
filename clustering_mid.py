@@ -40,5 +40,7 @@ plot_DATA_2D_in_clusters(new_M, labels)
 # absc = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 #
 # plt.plot(absc, inertia_list)
+# plt.xlabel("Nombre de clusters")
+# plt.ylabel("Inertie totale")
 
 plt.show()
