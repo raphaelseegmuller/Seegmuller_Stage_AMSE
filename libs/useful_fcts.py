@@ -443,6 +443,25 @@ def give_list_around_mid_point_flag(name_list, days_around):
     return np.asarray(matrix)
 
 
+def give_list_around_mid_point_2(name_list, days_around):
+    """
+    Obtention des indices utilisés pour réaliser l'ACP autour du point de milieu d'épidémie.
+    :param name_list: list, numpy.ndarray
+    :param days_around: int
+    :return: numpy.ndarray
+    """
+    matrix = []
+    for name in name_list:
+        index = []
+        md = mid_point(name)
+        data = converter("data_text/{}".format(name))
+        for date in [md - days_around, md, md + days_around]:
+            index += [data[date][0], data[date][2], data[date][4], data[date][6], data[date][8], data[date][10],
+                      data[date][12], data[date][14], data[date][15], data[date][17], data[date][22], data[date][23]]
+        matrix += [index]
+    return np.asarray(matrix)
+
+
 def give_average_matrix(name_list, days_around):
     """
     Obtention de la moyenne des indices pour une durée de deux semaines autour du temps de milieu d'épidémie.
@@ -537,13 +556,14 @@ def fig_creator_md_inter(name, coeff_list):
     return fig
 
 
-def fig_creator_CC_comparator(name_list, normalize, normalize2):
+def fig_creator_CC_comparator(name_list, normalize, normalize2, days_around):
     """
     Création de figure représentant le nombre cumulé d'individus contaminés par la COVID 19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
     :param normalize2: str
+    :param days_around: int
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
@@ -559,11 +579,10 @@ def fig_creator_CC_comparator(name_list, normalize, normalize2):
         xaxis={'title': 'Date (nombre de jour du milieu de l\'épidémie)'},
         yaxis={'title': 'Nombre d\'individu'}
     )
-    limit = 7
-    time_list = np.arange(-7, 8, 1)
+    time_list = np.arange(-days_around, days_around + 1, 1)
     for name in name_list:
         md = mid_point(name)
-        data = converter("data_text/{}".format(name))[md - limit:md + limit + 1]
+        data = converter("data_text/{}".format(name))[md - days_around:md + days_around + 1]
         matrix = []
         for t in range(len(data)):
             if normalize2 == "Non":
@@ -573,9 +592,9 @@ def fig_creator_CC_comparator(name_list, normalize, normalize2):
                     matrix += [data[t][27] / dt.Totpop[name]]
             else:
                 if normalize == "Non":
-                    matrix += [data[t][27] - data[limit][27]]
+                    matrix += [data[t][27] - data[days_around][27]]
                 else:  # Normalisation de la courbe entre 0 et 1
-                    matrix += [(data[t][27] - data[limit][27]) / dt.Totpop[name]]
+                    matrix += [(data[t][27] - data[days_around][27]) / dt.Totpop[name]]
         fig.add_scatter(
             x=time_list,
             y=matrix,
@@ -583,17 +602,18 @@ def fig_creator_CC_comparator(name_list, normalize, normalize2):
     return fig
 
 
-def fig_creator_C_comparator(name_list, normalize, normalize2):
+def fig_creator_C_comparator(name_list, normalize, normalize2, days_around):
     """
     Création de figure représentant le nombre d'individus infectés de la COVID 19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
     :param normalize2: str
+    :param days_around: int
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
-    title = "Nombre d'infectés' - COVID 19"
+    title = "Nombre d'infectés - COVID 19"
     fig.update_layout(
         title={
             'text': title,
@@ -605,13 +625,12 @@ def fig_creator_C_comparator(name_list, normalize, normalize2):
         xaxis={'title': 'Date (nombre de jour du milieu de l\'épidémie)'},
         yaxis={'title': 'Nombre d\'individu'}
     )
-    limit = 7
-    time_list = np.arange(-7, 8, 1)
+    time_list = np.arange(-days_around, days_around + 1, 1)
     for name in name_list:
         md = mid_point(name)
-        data = converter("data_text/{}".format(name))[md - limit:md + limit + 1]
+        data = converter("data_text/{}".format(name))[md - days_around:md + days_around + 1]
         matrix = []
-        cumulative_number = converter("data_text/{}".format(name))[md - limit - 1][27]
+        cumulative_number = converter("data_text/{}".format(name))[md - days_around - 1][27]
         for t in range(len(data)):
             if normalize2 == "Non":
                 if normalize == "Non":
@@ -620,9 +639,9 @@ def fig_creator_C_comparator(name_list, normalize, normalize2):
                     matrix += [(data[t][27] - cumulative_number) / dt.Totpop[name]]
             else:
                 if normalize == "Non":
-                    matrix += [data[t][27] - cumulative_number - data[limit][27] + data[limit - 1][27]]
+                    matrix += [data[t][27] - cumulative_number - data[days_around][27] + data[days_around - 1][27]]
                 else:  # Normalisation de la courbe entre 0 et 1
-                    matrix += [(data[t][27] - cumulative_number - data[limit][27] + data[limit - 1][27]) /
+                    matrix += [(data[t][27] - cumulative_number - data[days_around][27] + data[days_around - 1][27]) /
                                dt.Totpop[name]]
             cumulative_number = data[t][27]
         fig.add_scatter(
@@ -632,13 +651,14 @@ def fig_creator_C_comparator(name_list, normalize, normalize2):
     return fig
 
 
-def fig_creator_Cdeath_comparator(name_list, normalize, normalize2):
+def fig_creator_Cdeath_comparator(name_list, normalize, normalize2, days_around):
     """
     Création de figure représentant le nombre cumulé d'individus décédés de la COVID 19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
     :param normalize2: str
+    :param days_around: int
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
@@ -654,11 +674,10 @@ def fig_creator_Cdeath_comparator(name_list, normalize, normalize2):
         xaxis={'title': 'Date (nombre de jour du milieu de l\'épidémie)'},
         yaxis={'title': 'Nombre d\'individu'}
     )
-    limit = 7
-    time_list = np.arange(-7, 8, 1)
+    time_list = np.arange(-days_around, days_around + 1, 1)
     for name in name_list:
         md = mid_point(name)
-        data = converter("data_text/{}".format(name))[md - limit:md + limit + 1]
+        data = converter("data_text/{}".format(name))[md - days_around:md + days_around + 1]
         matrix = []
         for t in range(len(data)):
             if normalize2 == "Non":
@@ -668,9 +687,9 @@ def fig_creator_Cdeath_comparator(name_list, normalize, normalize2):
                     matrix += [data[t][28] / dt.Totpop[name]]
             else:
                 if normalize == "Non":
-                    matrix += [data[t][28] - data[limit][28]]
+                    matrix += [data[t][28] - data[days_around][28]]
                 else:  # Normalisation de la courbe entre 0 et 1
-                    matrix += [(data[t][28] - data[limit][28]) / dt.Totpop[name]]
+                    matrix += [(data[t][28] - data[days_around][28]) / dt.Totpop[name]]
         fig.add_scatter(
             x=time_list,
             y=matrix,
@@ -678,13 +697,14 @@ def fig_creator_Cdeath_comparator(name_list, normalize, normalize2):
     return fig
 
 
-def fig_creator_death_comparator(name_list, normalize, normalize2):
+def fig_creator_death_comparator(name_list, normalize, normalize2, days_around):
     """
     Création de figure représentant le nombre d'individus décédés de la COVID 19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
     :param normalize2: str
+    :param days_around: int
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
@@ -700,13 +720,12 @@ def fig_creator_death_comparator(name_list, normalize, normalize2):
         xaxis={'title': 'Date (nombre de jour du milieu de l\'épidémie)'},
         yaxis={'title': 'Nombre d\'individu'}
     )
-    limit = 7
-    time_list = np.arange(-7, 8, 1)
+    time_list = np.arange(-days_around, days_around + 1, 1)
     for name in name_list:
         md = mid_point(name)
-        data = converter("data_text/{}".format(name))[md - limit:md + limit + 1]
+        data = converter("data_text/{}".format(name))[md - days_around:md + days_around + 1]
         matrix = []
-        cumulative_number = converter("data_text/{}".format(name))[md - limit - 1][28]
+        cumulative_number = converter("data_text/{}".format(name))[md - days_around - 1][28]
         for t in range(len(data)):
             if normalize2 == "Non":
                 if normalize == "Non":
@@ -715,9 +734,9 @@ def fig_creator_death_comparator(name_list, normalize, normalize2):
                     matrix += [(data[t][28] - cumulative_number) / dt.Totpop[name]]
             else:
                 if normalize == "Non":
-                    matrix += [data[t][28] - cumulative_number - data[limit][28] + data[limit - 1][28]]
+                    matrix += [data[t][28] - cumulative_number - data[days_around][28] + data[days_around - 1][28]]
                 else:  # Normalisation de la courbe entre 0 et 1
-                    matrix += [(data[t][28] - cumulative_number - data[limit][28] + data[limit - 1][28]) /
+                    matrix += [(data[t][28] - cumulative_number - data[days_around][28] + data[days_around - 1][28]) /
                                dt.Totpop[name]]
             cumulative_number = data[t][28]
         fig.add_scatter(
