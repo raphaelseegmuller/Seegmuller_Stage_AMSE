@@ -248,6 +248,6 @@ if __name__ == '__main__':
 
 """
 Exécution du programme :
-- Rentrer dans le terminal : python models_interractive.py
+- Rentrer dans le terminal : python old_models_interractive.py
 - Cliquer sur le lien
 """
