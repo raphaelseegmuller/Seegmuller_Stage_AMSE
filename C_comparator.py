@@ -6,6 +6,8 @@ import pandas as pd
 
 from libs.useful_fcts import fig_creator_C_comparator
 
+days_around = 30
+
 df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv')
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -17,7 +19,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div(children=[
     dcc.Graph(
         id='graph',
-        figure=fig_creator_C_comparator(["France"], 'Non', 'Non')
+        figure=fig_creator_C_comparator(["France"], 'Non', 'Non', days_around)
     ),
     html.Div(id='Country_value', style={'margin-top': 20}),
     dcc.Dropdown(
@@ -254,7 +256,7 @@ def country(answer):
      Input('Normalize_choice', 'value'),
      Input('Normalize2_choice', 'value')])
 def update_graph(name_list, normalize, normalize2):
-    return fig_creator_C_comparator(name_list, normalize, normalize2)
+    return fig_creator_C_comparator(name_list, normalize, normalize2, days_around)
 
 
 if __name__ == '__main__':
