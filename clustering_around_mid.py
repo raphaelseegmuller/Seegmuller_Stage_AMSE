@@ -65,6 +65,9 @@ plot_DATA_2D_in_clusters(new_M, labels)
 #
 # print(chs_matrix)
 # plt.plot(absc1, chs_matrix)
+# plt.xlabel("Nombre de clusters")
+# plt.ylabel("Indice de Calinski-Harabasz")
+
 
 ### Détermination du nombre optimal de clusters en utilisant l'inertie ###
 
@@ -102,5 +105,7 @@ plot_DATA_2D_in_clusters(new_M, labels)
 #      absc = np.arange(1, 13)
 #
 # plt.plot(absc, inertia_list)
+# plt.xlabel("Nombre de clusters")
+# plt.ylabel("Inertie totale")
 
 plt.show()
