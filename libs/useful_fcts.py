@@ -192,7 +192,7 @@ def fig_creator(name_list, curve):
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
-    title = "OxCGRT - COVID 19"
+    title = "OxCGRT - COVID-19"
     fig.update_layout(
         title={
             'text': title,
@@ -234,14 +234,14 @@ def fig_creator(name_list, curve):
 
 def fig_creator_CC(name_list, normalize):
     """
-    Création de figure représentant le nombre cumulé d'individus contaminés par la COVID 19 en fonction du temps. Les
+    Création de figure représentant le nombre cumulé d'individus contaminés par la COVID-19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
-    title = "Nombre cumulé d'infectés - COVID 19"
+    title = "Nombre cumulé d'infectés - COVID-19"
     fig.update_layout(
         title={
             'text': title,
@@ -305,7 +305,7 @@ def GRCC_matrix_startGR(name_list):
 
 def CC_starting_point(name):
     """
-    Obtention de la date de la détection du premier cas de COVID 19. La date est obtenue en nombre de jours après le 1er
+    Obtention de la date de la détection du premier cas de COVID-19. La date est obtenue en nombre de jours après le 1er
     janvier 2020.
     :param name: str -> Nom du pays
     :return: int
@@ -336,7 +336,7 @@ def GRCC_matrix_startCC(name_list):
 
 def give_CC_matrix(name):
     """
-    Obtention du nombre cumulé de cas de COVID 19 en fonction du temps.
+    Obtention du nombre cumulé de cas de COVID-19 en fonction du temps.
     :param name: str -> Nom du pays
     :return: numpy.ndarray
     """
@@ -350,7 +350,7 @@ def give_CC_matrix(name):
 
 def give_listCC_matrix(name_list):
     """
-    Obtention du nombre cumulé de cas de COVID 19 en fonction du temps pour une liste de pays.
+    Obtention du nombre cumulé de cas de COVID-19 en fonction du temps pour une liste de pays.
     :param name_list: list, numpy.ndarray
     :return: numpy.ndarray
     """
@@ -487,14 +487,14 @@ def give_average_matrix(name_list, days_around):
 def fig_creator_md_inter(name, coeff_list):
     """
     Création de figure pour models_interractive.py : Représentation des différents modèles et de la courbe réelle du
-    nombre cumulé de cas de la COVID 19.
+    nombre cumulé de cas de la COVID-19.
     :param name: str -> Nom du pays
     :param coeff_list: list -> Liste des paramètres des différents modèles dans cet ordre : [r_log, r_rich, alpha,
     beta_SIR, gamma_SIR, beta_SEIR, sigma_SEIR, gamma_SEIR]
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
-    title = "Nombre cumulé d'infectés - COVID 19"
+    title = "Nombre cumulé d'infectés - COVID-19"
     fig.update_layout(
         title={
             'text': title,
@@ -558,7 +558,7 @@ def fig_creator_md_inter(name, coeff_list):
 
 def fig_creator_CC_comparator(name_list, normalize, normalize2, days_around):
     """
-    Création de figure représentant le nombre cumulé d'individus contaminés par la COVID 19 en fonction du temps. Les
+    Création de figure représentant le nombre cumulé d'individus contaminés par la COVID-19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
@@ -567,7 +567,7 @@ def fig_creator_CC_comparator(name_list, normalize, normalize2, days_around):
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
-    title = "Nombre cumulé d'infectés - COVID 19"
+    title = "Nombre cumulé d'infectés - COVID-19"
     fig.update_layout(
         title={
             'text': title,
@@ -604,7 +604,7 @@ def fig_creator_CC_comparator(name_list, normalize, normalize2, days_around):
 
 def fig_creator_C_comparator(name_list, normalize, normalize2, days_around):
     """
-    Création de figure représentant le nombre d'individus infectés de la COVID 19 en fonction du temps. Les
+    Création de figure représentant le nombre d'individus infectés de la COVID-19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
@@ -613,7 +613,7 @@ def fig_creator_C_comparator(name_list, normalize, normalize2, days_around):
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
-    title = "Nombre d'infectés - COVID 19"
+    title = "Nombre d'infectés - COVID-19"
     fig.update_layout(
         title={
             'text': title,
@@ -653,7 +653,7 @@ def fig_creator_C_comparator(name_list, normalize, normalize2, days_around):
 
 def fig_creator_Cdeath_comparator(name_list, normalize, normalize2, days_around):
     """
-    Création de figure représentant le nombre cumulé d'individus décédés de la COVID 19 en fonction du temps. Les
+    Création de figure représentant le nombre cumulé d'individus décédés de la COVID-19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
@@ -662,7 +662,7 @@ def fig_creator_Cdeath_comparator(name_list, normalize, normalize2, days_around)
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
-    title = "Nombre cumulé de décès - COVID 19"
+    title = "Nombre cumulé de décès - COVID-19"
     fig.update_layout(
         title={
             'text': title,
@@ -699,7 +699,7 @@ def fig_creator_Cdeath_comparator(name_list, normalize, normalize2, days_around)
 
 def fig_creator_death_comparator(name_list, normalize, normalize2, days_around):
     """
-    Création de figure représentant le nombre d'individus décédés de la COVID 19 en fonction du temps. Les
+    Création de figure représentant le nombre d'individus décédés de la COVID-19 en fonction du temps. Les
     données viennent de 'data_text'.
     :param name_list: list -> Liste de pays
     :param normalize: str
@@ -708,7 +708,7 @@ def fig_creator_death_comparator(name_list, normalize, normalize2, days_around):
     :return: plotly.graph_objs._figure.Figure
     """
     fig = make_subplots(rows=1, cols=1)
-    title = "Nombre de décès - COVID 19"
+    title = "Nombre de décès - COVID-19"
     fig.update_layout(
         title={
             'text': title,
@@ -767,7 +767,7 @@ def error(y_obs, y_pred):
 
 def f_logistic_minimization(coeff, name):
     """
-    Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID 19
+    Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID-19
     et le modèle logistique défini à partir des paramètres de la fonction.
     :param coeff: numpy.ndarray
     :param name: str -> Nom du pays
@@ -796,7 +796,7 @@ def logistic_minimization(coeff, name):
 
 def f_richards_minimization(coeff, name):
     """
-    Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID 19
+    Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID-19
     et le modèle de Richards défini à partir des paramètres de la fonction.
     :param coeff: numpy.ndarray
     :param name: str -> Nom du pays
@@ -825,7 +825,7 @@ def richards_minimization(coeff, name):
 
 def f_SIR_minimization(coeff, name):
     """
-    Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID 19
+    Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID-19
     et le modèle SIR défini à partir des paramètres de la fonction.
     :param coeff: numpy.ndarray
     :param name: str -> Nom du pays
@@ -854,7 +854,7 @@ def SIR_minimization(coeff, name):
 
 def f_SEIR_minimization(coeff, name):
     """
-    Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID 19
+    Obtention d'une valeur représentative de l'erreur entre les observations réelles du nombre cumulé de cas de COVID-19
     et le modèle SEIR défini à partir des paramètres de la fonction.
     :param coeff: numpy.ndarray
     :param name: str -> Nom du pays
