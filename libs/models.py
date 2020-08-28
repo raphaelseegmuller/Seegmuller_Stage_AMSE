@@ -6,7 +6,7 @@ from scipy.integrate import odeint
 
 def logistique(C0, K, r, t):
     """
-    Calcul du nombre cumulé de cas de COVID 19 avec le modèle logistique.
+    Calcul du nombre cumulé de cas de COVID-19 avec le modèle logistique.
     :param C0: int
     :param K: int
     :param r: int, float, numpy.ndarray
@@ -23,7 +23,7 @@ def logistique(C0, K, r, t):
 
 def richards(C0, K, r, t, alpha):
     """
-    Calcul du nombre cumulé de cas de COVID 19 avec le modèle logistique.
+    Calcul du nombre cumulé de cas de COVID-19 avec le modèle logistique.
     :param C0: int
     :param K: int
     :param r: int, float, numpy.ndarray
@@ -61,7 +61,7 @@ def deriv_SIR(y, t, N, beta, gamma):
 
 def SIR(S_init, I_init, R_init, t, N_tot, beta, gamma):
     """
-    Calcul du nombre cumulé de cas de COVID 19 avec le modèle SIR.
+    Calcul du nombre cumulé de cas de COVID-19 avec le modèle SIR.
     :param S_init: int, float
     :param I_init: int, float
     :param R_init: int, float
@@ -112,7 +112,7 @@ def deriv_SEIR(y, t, N, beta, sigma, gamma):
 
 def SEIR(S_init, E_init, I_init, R_init, t, N_tot, beta, sigma, gamma):
     """
-    Calcul du nombre cumulé de cas de COVID 19 avec le modèle SEIR.
+    Calcul du nombre cumulé de cas de COVID-19 avec le modèle SEIR.
     :param S_init: int, float
     :param E_init: int, float
     :param I_init: int, float
